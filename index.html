@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LuminaCalc – A luminous, all-in-one calculator, formula library, and business toolkit with stunning animations and adaptive themes.">
+  <title>LuminaCalc | Glow. Calculate. Create.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Cursor Glow (system cursor stays) -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Particle / Ambient Background -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-logo" onclick="scrollToSection('hero')">
+      <div class="logo-mark">
+        <svg viewBox="0 0 64 64" class="logo-svg">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a78bfa"/>
+              <stop offset="50%" stop-color="#67e8f9"/>
+              <stop offset="100%" stop-color="#f472b6"/>
+            </linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="url(#logoGrad)" stroke-width="2.5" opacity="0.6"/>
+          <path d="M20 40 L32 18 L44 40 Z" fill="none" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="34" r="4" fill="url(#logoGrad)"/>
+          <path d="M26 28 Q32 22 38 28" fill="none" stroke="url(#logoGrad)" stroke-width="1.5" opacity="0.8"/>
+        </svg>
+      </div>
+      <span class="logo-text">Lumina<span>Calc</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero" data-section="hero">Home</a></li>
+      <li><a href="#calculator" data-section="calculator">Calculator</a></li>
+      <li><a href="#formulas" data-section="formulas">Formulas</a></li>
+      <li><a href="#business" data-section="business">Business</a></li>
+      <li><a href="#orders" data-section="orders">Orders</a></li>
+    </ul>
+    <button class="nav-hamburger" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge reveal">✦ All-in-One Math & Business Nexus</div>
+      <h1 class="hero-title">
+        <span class="word">Illuminate</span>
+        <span class="word">Every</span>
+        <span class="word">Calculation</span>
+      </h1>
+      <p class="hero-sub reveal">Formulas • Scientific Power • Business Payments • Customer Orders — all glowing in one seamless experience.</p>
+      <div class="hero-cta reveal">
+        <button class="btn-primary" onclick="scrollToSection('calculator')">Start Calculating</button>
+        <button class="btn-ghost" onclick="scrollToSection('formulas')">Explore Formulas</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-card card-1">sin²θ + cos²θ = 1</div>
+      <div class="floating-card card-2">∫ eˣ dx = eˣ + C</div>
+      <div class="floating-card card-3">a² + b² = c²</div>
+      <div class="floating-card card-4">d/dx [xⁿ] = n xⁿ⁻¹</div>
+    </div>
+  </section>
+
+  <!-- Calculator Section -->
+  <section class="section" id="calculator">
+    <div class="section-header reveal">
+      <h2>Scientific Calculator</h2>
+      <p>Powerful, precise, and beautiful. Switch between Basic & Scientific modes.</p>
+    </div>
+    <div class="calc-wrapper reveal">
+      <div class="calc-mode-toggle">
+        <button class="mode-btn active" data-mode="basic">Basic</button>
+        <button class="mode-btn" data-mode="scientific">Scientific</button>
+      </div>
+      <div class="calculator glass">
+        <div class="calc-display">
+          <div class="calc-expression" id="calcExpression"></div>
+          <div class="calc-result" id="calcResult">0</div>
+        </div>
+        <div class="calc-buttons" id="calcButtons">
+          <!-- Buttons injected by JS -->
+        </div>
+      </div>
+      <div class="calc-history glass">
+        <h3>History</h3>
+        <ul id="calcHistory"></ul>
+        <button class="btn-clear" id="clearHistory">Clear History</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Formulas Section -->
+  <section class="section" id="formulas">
+    <div class="section-header reveal">
+      <h2>Formula Library</h2>
+      <p>Trigonometry • Geometry • Algebra • Derivatives • Integrals • Finance & more. Search or browse.</p>
+    </div>
+    <div class="formula-controls reveal">
+      <input type="text" id="formulaSearch" placeholder="Search formulas (e.g. sin, quadratic, integral)..." class="search-input">
+      <div class="formula-tabs" id="formulaTabs">
+        <button class="tab-btn active" data-cat="all">All</button>
+        <button class="tab-btn" data-cat="trig">Trigonometry</button>
+        <button class="tab-btn" data-cat="geo">Geometry</button>
+        <button class="tab-btn" data-cat="alg">Algebra</button>
+        <button class="tab-btn" data-cat="deriv">Derivatives</button>
+        <button class="tab-btn" data-cat="integ">Integrals</button>
+        <button class="tab-btn" data-cat="finance">Finance</button>
+        <button class="tab-btn" data-cat="physics">Physics</button>
+      </div>
+    </div>
+    <div class="formula-grid" id="formulaGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- Business Payments -->
+  <section class="section" id="business">
+    <div class="section-header reveal">
+      <h2>Business Payment Tools</h2>
+      <p>Loan EMI • Simple & Compound Interest • Discount • Tip • Invoice Estimator</p>
+    </div>
+    <div class="biz-grid">
+      <div class="biz-card glass reveal">
+        <h3>Loan / EMI Calculator</h3>
+        <div class="form-group">
+          <label>Principal (P)</label>
+          <input type="number" id="emiPrincipal" value="100000" min="0">
+        </div>
+        <div class="form-group">
+          <label>Annual Interest Rate (%)</label>
+          <input type="number" id="emiRate" value="8.5" min="0" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Tenure (months)</label>
+          <input type="number" id="emiTenure" value="60" min="1">
+        </div>
+        <button class="btn-primary full" onclick="calcEMI()">Calculate EMI</button>
+        <div class="biz-result" id="emiResult">EMI: —</div>
+      </div>
+
+      <div class="biz-card glass reveal">
+        <h3>Interest Calculator</h3>
+        <div class="form-group">
+          <label>Principal</label>
+          <input type="number" id="intPrincipal" value="50000">
+        </div>
+        <div class="form-group">
+          <label>Rate (% per year)</label>
+          <input type="number" id="intRate" value="7" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Time (years)</label>
+          <input type="number" id="intTime" value="3" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="intType">
+            <option value="simple">Simple Interest</option>
+            <option value="compound">Compound Interest</option>
+          </select>
+        </div>
+        <button class="btn-primary full" onclick="calcInterest()">Calculate</button>
+        <div class="biz-result" id="intResult">Interest: —</div>
+      </div>
+
+      <div class="biz-card glass reveal">
+        <h3>Discount & Final Price</h3>
+        <div class="form-group">
+          <label>Original Price</label>
+          <input type="number" id="discPrice" value="1999">
+        </div>
+        <div class="form-group">
+          <label>Discount (%)</label>
+          <input type="number" id="discPercent" value="15" min="0" max="100">
+        </div>
+        <button class="btn-primary full" onclick="calcDiscount()">Apply Discount</button>
+        <div class="biz-result" id="discResult">Final Price: —</div>
+      </div>
+
+      <div class="biz-card glass reveal">
+        <h3>Tip & Split Bill</h3>
+        <div class="form-group">
+          <label>Bill Amount</label>
+          <input type="number" id="tipBill" value="850">
+        </div>
+        <div class="form-group">
+          <label>Tip (%)</label>
+          <input type="number" id="tipPercent" value="10" min="0">
+        </div>
+        <div class="form-group">
+          <label>Split between (people)</label>
+          <input type="number" id="tipPeople" value="2" min="1">
+        </div>
+        <button class="btn-primary full" onclick="calcTip()">Calculate</button>
+        <div class="biz-result" id="tipResult">Per person: —</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orders Section -->
+  <section class="section" id="orders">
+    <div class="section-header reveal">
+      <h2>Customer Orders</h2>
+      <p>Add, track, and manage incoming orders. Data stays in your browser (localStorage).</p>
+    </div>
+    <div class="orders-layout">
+      <div class="order-form glass reveal">
+        <h3>Add New Order</h3>
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" id="orderCustomer" placeholder="e.g. Ayesha Khan">
+        </div>
+        <div class="form-group">
+          <label>Item / Service</label>
+          <input type="text" id="orderItem" placeholder="e.g. Custom Website Package">
+        </div>
+        <div class="form-group">
+          <label>Amount (PKR / USD)</label>
+          <input type="number" id="orderAmount" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="orderStatus">
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="orderNotes" rows="2" placeholder="Any special instructions..."></textarea>
+        </div>
+        <button class="btn-primary full" onclick="addOrder()">Add Order</button>
+      </div>
+      <div class="order-list-wrapper glass reveal">
+        <div class="order-list-header">
+          <h3>Orders (<span id="orderCount">0</span>)</h3>
+          <div class="order-total">Total: <span id="orderTotal">0</span></div>
+        </div>
+        <div class="order-filters">
+          <button class="filter-btn active" data-status="all">All</button>
+          <button class="filter-btn" data-status="pending">Pending</button>
+          <button class="filter-btn" data-status="processing">Processing</button>
+          <button class="filter-btn" data-status="completed">Completed</button>
+        </div>
+        <ul class="order-list" id="orderList">
+          <!-- Orders injected -->
+        </ul>
+        <button class="btn-clear" onclick="clearAllOrders()">Clear All Orders</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="logo-mark small">
+          <svg viewBox="0 0 64 64" class="logo-svg">
+            <defs>
+              <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a78bfa"/>
+                <stop offset="50%" stop-color="#67e8f9"/>
+                <stop offset="100%" stop-color="#f472b6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="url(#logoGrad2)" stroke-width="2.5" opacity="0.6"/>
+            <path d="M20 40 L32 18 L44 40 Z" fill="none" stroke="url(#logoGrad2)" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="32" cy="34" r="4" fill="url(#logoGrad2)"/>
+          </svg>
+        </div>
+        <span>LuminaCalc</span>
+      </div>
+      <p>Built for clarity, beauty, and usefulness. All calculations run locally in your browser.</p>
+      <p class="footer-note">© 2026 LuminaCalc • Designed with light & intention</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
